@@ -13,9 +13,9 @@ Usage: `python3 generate_samples.py`
 
 Some small functions to: 
 
-    * play specific notes 
-    * create complete arpeggiated cycles of sequences
-    * loop sequences of notes
+* play specific notes 
+* create complete arpeggiated cycles of sequences
+* loop sequences of notes
 
 
 Usage: `ipython3 -i play.py`
