@@ -1,4 +1,4 @@
-Tiny experiments in making bleeps, bloop, blerps, and other assorted bl`*`s.
+Tiny experiments in making bleeps, bloops, blerps, and other assorted bl`*`ps.
 
 
 ## generate_samples.py ##
