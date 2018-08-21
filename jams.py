@@ -69,6 +69,20 @@ def _play_sample(label, assets_dir=os.path.join(os.getcwd(), 'assets')):
 
 
 def play(given_note, dur=4, assets_dir=os.path.join(os.getcwd(), 'assets')):
+    """
+    # a single note sample (quarter note by default)
+    play('c3')
+
+    # a sequence of notes with the same duration
+    play(('c3', 'd#3', 'g3'), dur=16) # 16th note in this case
+
+    # A sequence of (note, duration) tuples
+    seq = (('c3', 1), ('d#3', 4), ('g3', 4), ('c4', 16), ('g3', 4), ('d#3', 4), ('c3', 1))
+    play(seq)
+
+    # A sample
+    play('song1')
+    """
     if _is_note_tuple(given_note):
         notename, duration = given_note
         fname = os.path.join(assets_dir, f'{_parse_note(notename)}_{duration}.wav')
@@ -93,6 +107,9 @@ def mirror(seq, full_cycle=False):
 
 
 def loop(seq, dur=DEFAULT_DUR):
+    """
+    Keep playing `seq` until you stop it with ctrl+c.
+    """
     if isinstance(seq, str):
         seq = (seq,)
 
@@ -121,6 +138,14 @@ def _seq_to_notes(given_note, dur=4, notes_list=None):
 
 
 def generate_sample(note_tuple_iterable, label, bpm=BPM, dur=4):
+    """
+    Save a sequence of notes as a self-contained sample.
+
+    >> seq = ('a', 'c', 'd', 'e')
+    >> generate_sample(seq, 'samplename')
+
+    >> play('samplename')
+    """
     ps.make_wav(
         _seq_to_notes(note_tuple_iterable, dur=dur),
         fn=os.path.join(ASSET_DIR, f'{label}.wav'),
@@ -128,10 +153,43 @@ def generate_sample(note_tuple_iterable, label, bpm=BPM, dur=4):
     )
 
 
-def chord(notes, dur=4):
-    p = Pool(len(notes))
-    p.map(play, _seq_to_notes(notes, dur=dur))
+def _seq_is_all_note_tuples(t):
+    return ((isinstance(t, tuple) or isinstance(t, list) and
+            all([_is_note_tuple(e) for e in t])))
 
+
+def _seq_is_flat(s):
+    for item in s:
+        if isinstance(item, tuple) or isinstance(item, list):
+            return False
+    return True
+
+
+def chord(notes, dur=4):
+    '''
+    Play several notes/samples at the same time.
+    
+    >> seq = ('e', 'g', 'b', 'e4')
+    >> chord(seq, dur=1)
+
+    >> samp1, samp2 = seq, ('g', 'b', 'e4', 'g4')
+    >> simul((samp1, samp2))
+    '''
+    p = Pool(len(notes))
+
+    reworked_note_collection = []
+    for collection in notes:
+        if _seq_is_all_note_tuples(collection):
+            reworked_note_collection.append(_seq_to_notes(collection, dur=dur))
+        else:
+            reworked_note_collection.append(collection)
+
+    if _seq_is_flat(notes):
+        reworked_note_collection = _seq_to_notes(notes, dur=dur)
+
+    p.map(play, reworked_note_collection)
+
+simul = chord
 
 def _generate_wavs():
     if not os.path.exists(ASSET_DIR):
