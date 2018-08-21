@@ -1,25 +1,20 @@
 from itertools import cycle
 from multiprocessing import Pool
 import os
+import re
 import subprocess
 import sys
+
 
 import pysynth as ps
 
 """
-A handful of functions to play around with making beeps and bloops.
+A handful of functions to play around with making bleeps and bloops.
 """
 
-def _generate_all_notes():
-    notes = []
-    for note in ('a', 'b', 'c', 'd', 'e', 'f', 'g'):
-        for modifier in ('', '#', 'b'):
-            for octave in ('', 1, 2, 3, 4, 5):
-                notes.append(f'{note}{modifier}{octave}')
-    return notes
 
-
-ALL_KNOWN_NOTES = set(_generate_all_notes())
+DURATIONS = list(range(1, 33))
+OCTAVES = list(range(1, 6))
 
 # 1 for whole note, 2 for half, 4 for quarter, 16 for 16th, 32 for 32nd
 DEFAULT_DUR = 4 
@@ -28,8 +23,40 @@ ASSET_DIR = os.path.join(os.getcwd(), 'assets')
 
 BPM = 170
 
-duration = list(range(1, 33))
-octaves = list(range(1, 6))
+def _generate_all_notes():
+    notes = []
+    for note in ('a', 'b', 'c', 'd', 'e', 'f', 'g'):
+        for modifier in ('', '#', 'b'):
+            for octave in OCTAVES:
+                notes.append(f'{note}{modifier}{octave}')
+    return notes
+
+
+ALL_KNOWN_NOTES = set(_generate_all_notes())
+
+
+def _str_is_note(given_note):
+    legal_roots = ['a', 'b', 'c', 'd', 'e', 'f', 'g']
+    modifiers = ['#', 'b']
+    octaves = ['1', '2', '3', '4', '5']
+
+    root_is_legit = given_note[0] in legal_roots
+
+    if root_is_legit:
+        if len(given_note) == 1:
+            return True
+        
+        if len(given_note) == 2:
+            if given_note[1] in modifiers + octaves:
+                return True
+            else:
+                return False
+
+        if len(given_note) == 3:
+            if given_note[1] in modifiers and given_note[2] in octaves:
+                return True
+
+    return False
 
 
 def _parse_note(note):
@@ -88,10 +115,11 @@ def play(given_note, dur=4, assets_dir=os.path.join(os.getcwd(), 'assets')):
         fname = os.path.join(assets_dir, f'{_parse_note(notename)}_{duration}.wav')
         subprocess.call(['aplay', fname], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
     elif isinstance(given_note, str):
-        if given_note not in ALL_KNOWN_NOTES:
+        if not _str_is_note(given_note):
             _play_sample(given_note)
         else:
-            play((given_note, dur))
+            notename = _parse_note(given_note)
+            play((notename, dur))
     elif isinstance(given_note, list) or isinstance(given_note, tuple):
         for element in given_note:
             play(element, dur=dur)
@@ -199,20 +227,21 @@ def chord(notes, dur=4):
 
     p.map(play, reworked_note_collection)
 
+
 simul = chord
+
 
 def _generate_wavs():
     if not os.path.exists(ASSET_DIR):
-        raise SystemExit(f"Please ensure the {ASSET_DIR} exists on your file system!")
+        raise SystemExit(f"Please ensure the directory {ASSET_DIR} exists on your file system!")
 
-    for note in ('a', 'a#', 'b', 'c', 'c#', 'd', 'd#', 'e', 'f', 'f#', 'g', 'g#'):
-        for octave in octaves:
-            for dur in duration:
-                ps.make_wav(
-                    ((f'{note}{octave}', dur),), 
-                    fn=os.path.join(ASSET_DIR, f'{note}{octave}_{dur}.wav'),
-                    bpm=BPM,
-                )
+    for note in _generate_all_notes():
+        for dur in DURATIONS:
+            ps.make_wav(
+                ((f'{note}', dur),), 
+                fn=os.path.join(ASSET_DIR, f'{note}_{dur}.wav'),
+                bpm=BPM,
+            )
 
 
 if __name__ == '__main__':
