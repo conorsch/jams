@@ -165,6 +165,13 @@ def _seq_is_flat(s):
     return True
 
 
+def _all_samples(s):
+    for i in s:
+        if i in ALL_KNOWN_NOTES:
+            return False
+    return True
+
+
 def chord(notes, dur=4):
     '''
     Play several notes/samples at the same time.
@@ -186,6 +193,9 @@ def chord(notes, dur=4):
 
     if _seq_is_flat(notes):
         reworked_note_collection = _seq_to_notes(notes, dur=dur)
+
+    if _all_samples(notes):
+        reworked_note_collection = notes
 
     p.map(play, reworked_note_collection)
 
