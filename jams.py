@@ -116,7 +116,7 @@ def _is_note_tuple(t):
 
 
 def _play_wav_file(wav_fname, chunk=1024):
-	""" 
+    """ 
     More or less lifted from the PyAudio docs: 
     https://people.csail.mit.edu/hubert/pyaudio/docs/#id3 
     """
