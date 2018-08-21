@@ -18,8 +18,8 @@ Usage: `ipython3 -i jams.py`
 Some small functions to: 
 
 * play specific notes 
-* create complete arpeggiated cycles of sequences
 * loop sequences of notes
+* create complete arpeggiated cycles of sequences
 
 
 ## Install/Usage Requirements + Assumptions ##

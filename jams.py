@@ -45,12 +45,20 @@ ASSET_DIR = os.path.join(os.getcwd(), 'assets')
 BPM = 170
 
 def _generate_all_notes():
+    roots = ('a', 'b', 'c', 'd', 'e', 'f', 'g')
+
     notes = []
-    for note in ('a', 'b', 'c', 'd', 'e', 'f', 'g'):
+    for note in roots:
         for modifier in ('', '#', 'b'):
             for octave in OCTAVES:
                 notes.append(f'{note}{modifier}{octave}')
-    return notes
+
+    unadorned = []
+    for n in roots:
+        for o in [''] + OCTAVES:
+            unadorned.append(f'{n}{o}')
+    
+    return notes + unadorned
 
 
 ALL_KNOWN_NOTES = set(_generate_all_notes())
@@ -139,6 +147,7 @@ def _play_sample(label, assets_dir=os.path.join(os.getcwd(), 'assets')):
         raise FileNotFoundError(msg)
     _play_wav_file(fname)
 
+
 def play(given_note, dur=4, assets_dir=os.path.join(os.getcwd(), 'assets')):
     """
     # a single note sample (quarter note by default)
@@ -199,7 +208,8 @@ def _seq_to_notes(given_note, dur=4, notes_list=None):
         notes_list = []
 
     if _is_note_tuple(given_note):
-        notes_list.append(given_note)
+        notename, duration = _parse_note(given_note), given_note[1]
+        notes_list.append((notename, duration))
     elif isinstance(given_note, str):
         notes_list.append((given_note, dur))
     elif isinstance(given_note, list) or isinstance(given_note, tuple):
@@ -209,7 +219,7 @@ def _seq_to_notes(given_note, dur=4, notes_list=None):
     return tuple(notes_list)
 
 
-def generate_sample(note_tuple_iterable, label, bpm=BPM, dur=4):
+def mksample(note_tuple_iterable, label, bpm=BPM, dur=4):
     """
     Save a sequence of notes as a self-contained sample.
 
@@ -265,6 +275,7 @@ def chord(notes, dur=4):
 
     if _seq_is_flat(notes):
         reworked_note_collection = _seq_to_notes(notes, dur=dur)
+        print(reworked_note_collection)
 
     if _all_samples(notes):
         reworked_note_collection = notes
