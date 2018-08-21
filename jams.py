@@ -71,17 +71,17 @@ def _play_sample(label, assets_dir=os.path.join(os.getcwd(), 'assets')):
 def play(given_note, dur=4, assets_dir=os.path.join(os.getcwd(), 'assets')):
     """
     # a single note sample (quarter note by default)
-    play('c3')
+    >> play('c3')
 
     # a sequence of notes with the same duration
-    play(('c3', 'd#3', 'g3'), dur=16) # 16th note in this case
+    >> play(('c3', 'd#3', 'g3'), dur=16) # 16th note in this case
 
     # A sequence of (note, duration) tuples
-    seq = (('c3', 1), ('d#3', 4), ('g3', 4), ('c4', 16), ('g3', 4), ('d#3', 4), ('c3', 1))
-    play(seq)
+    >> seq = (('c3', 1), ('d#3', 4), ('g3', 4), ('c4', 16), ('g3', 4), ('d#3', 4), ('c3', 1))
+    >> play(seq)
 
     # A sample
-    play('song1')
+    >> play('song1')
     """
     if _is_note_tuple(given_note):
         notename, duration = given_note
