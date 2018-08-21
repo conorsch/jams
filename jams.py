@@ -17,7 +17,7 @@ A handful of functions to play around with making bleeps and bloops.
 
 SUPPRESS_ALSA = True
 #####################################################
-# Suppressing Alsa's messages 						
+# Suppressing Alsa's messages                       
 #
 # This makes more sense after consulting:
 # https://stackoverflow.com/questions/7088672/pyaudio-working-but-spits-out-error-messages-each-time
@@ -120,24 +120,24 @@ def _play_wav_file(wav_fname, chunk=1024):
     More or less lifted from the PyAudio docs: 
     https://people.csail.mit.edu/hubert/pyaudio/docs/#id3 
     """
-	wf = wave.open(wav_fname, 'rb')
+    wf = wave.open(wav_fname, 'rb')
 
-	p = pyaudio.PyAudio()
+    p = pyaudio.PyAudio()
 
-	stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-					channels=wf.getnchannels(),
-					rate=wf.getframerate(),
-					output=True)
+    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
 
-	data = wf.readframes(chunk)
-	while len(data) > 0:
-		stream.write(data)
-		data = wf.readframes(chunk)
+    data = wf.readframes(chunk)
+    while len(data) > 0:
+        stream.write(data)
+        data = wf.readframes(chunk)
 
-	stream.stop_stream()
-	stream.close()
+    stream.stop_stream()
+    stream.close()
 
-	p.terminate()
+    p.terminate()
 
 
 def _play_sample(label, assets_dir=os.path.join(os.getcwd(), 'assets')):
