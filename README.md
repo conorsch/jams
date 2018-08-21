@@ -1,24 +1,25 @@
 Tiny experiments in making bleeps, bloops, blerps, and other assorted bl`*`ps.
 
 
-## generate_samples.py ##
-
-Create a whole bunch of .wav files for single-note samples.
+## jams.py ##
 
 
-Usage: `python3 generate_samples.py`
+(As a script)
+
+Usage: `python3 jams.py --generate`
+
+Creates a whole bunch of .wav files for single-note samples.
 
 
-## play.py ##
+(As a library)
+
+Usage: `ipython3 -i jams.py`
 
 Some small functions to: 
 
 * play specific notes 
 * create complete arpeggiated cycles of sequences
 * loop sequences of notes
-
-
-Usage: `ipython3 -i play.py`
 
 
 ## Install/Usage Requirements + Assumptions ##
