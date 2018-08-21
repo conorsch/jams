@@ -1,1 +1,2 @@
 PySynth
+pyaudio
