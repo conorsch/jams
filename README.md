@@ -20,12 +20,15 @@ Some small functions to:
 * play specific notes 
 * loop sequences of notes
 * create complete arpeggiated cycles of sequences
-
+* create .wav samples from note sequences on the fly
 
 ## Install/Usage Requirements + Assumptions ##
 
 * You're running Python 3.6.5 or better.
 
+* You have `PyAudio` installed: `python -m pip install pyaudio`
+
 * You have `pysynth` installed. Details here: https://github.com/mdoege/PySynth
 
-* You're running some modern (probably Debian-derived) Linux and have `aplay` installed.
+
+(**Note:** If you're running Linux, you can try using `install_dependencies.sh` to install PyAudio and pysynth)
