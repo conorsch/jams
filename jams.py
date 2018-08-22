@@ -168,11 +168,10 @@ def play(given_note, dur=4, assets_dir=os.path.join(os.getcwd(), 'assets')):
         fname = os.path.join(assets_dir, f'{_parse_note(notename)}_{duration}.wav')
         _play_wav_file(fname)
     elif isinstance(given_note, str):
-        if not _str_is_note(given_note):
-            _play_sample(given_note)
+        if _str_is_note(given_note):
+            play((_parse_note(given_note), dur))
         else:
-            notename = _parse_note(given_note)
-            play((notename, dur))
+            _play_sample(given_note)
     elif isinstance(given_note, list) or isinstance(given_note, tuple):
         for element in given_note:
             play(element, dur=dur)
@@ -275,7 +274,6 @@ def chord(notes, dur=4):
 
     if _seq_is_flat(notes):
         reworked_note_collection = _seq_to_notes(notes, dur=dur)
-        print(reworked_note_collection)
 
     if _all_samples(notes):
         reworked_note_collection = notes
