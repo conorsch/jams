@@ -42,7 +42,7 @@ DEFAULT_DUR = 4
 
 ASSET_DIR = os.path.join(os.getcwd(), 'assets')
 
-BPM = 170
+BPM = 140
 
 def _generate_all_notes():
     roots = ('a', 'b', 'c', 'd', 'e', 'f', 'g')
@@ -236,20 +236,13 @@ def mksample(note_tuple_iterable, label, bpm=BPM, dur=4):
 
 
 def _seq_is_all_note_tuples(t):
-    return ((isinstance(t, tuple) or isinstance(t, list) and
-            all([_is_note_tuple(e) for e in t])))
+    return ((isinstance(t, tuple) or isinstance(t, list)) and
+            all([_is_note_tuple(e) for e in t]))
 
 
 def _seq_is_flat(s):
     for item in s:
         if isinstance(item, tuple) or isinstance(item, list):
-            return False
-    return True
-
-
-def _all_samples(s):
-    for i in s:
-        if i in ALL_KNOWN_NOTES:
             return False
     return True
 
@@ -269,15 +262,12 @@ def chord(notes, dur=4):
     reworked_note_collection = []
     for collection in notes:
         if _seq_is_all_note_tuples(collection):
-            reworked_note_collection.append(_seq_to_notes(collection, dur=dur))
-        else:
             reworked_note_collection.append(collection)
+        else:
+            reworked_note_collection.append(_seq_to_notes(collection, dur=dur))
 
     if _seq_is_flat(notes):
         reworked_note_collection = _seq_to_notes(notes, dur=dur)
-
-    if _all_samples(notes):
-        reworked_note_collection = notes
 
     p.map(play, reworked_note_collection)
 
