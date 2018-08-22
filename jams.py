@@ -124,20 +124,19 @@ def _play_wav_file(wav_fname, chunk=1024):
 
     p = pyaudio.PyAudio()
 
-    try:
-        stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
-                        channels=wf.getnchannels(),
-                        rate=wf.getframerate(),
-                        output=True)
+    stream = p.open(format=p.get_format_from_width(wf.getsampwidth()),
+                    channels=wf.getnchannels(),
+                    rate=wf.getframerate(),
+                    output=True)
 
+    try:
         data = wf.readframes(chunk)
         while len(data) > 0:
             stream.write(data)
             data = wf.readframes(chunk)
-
+    finally:
         stream.stop_stream()
         stream.close()
-    finally:
         p.terminate()
 
 
