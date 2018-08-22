@@ -218,22 +218,6 @@ def _seq_to_notes(given_note, dur=4, notes_list=None):
     return tuple(notes_list)
 
 
-def mksample(note_tuple_iterable, label, bpm=BPM, dur=4):
-    """
-    Save a sequence of notes as a self-contained sample.
-
-    >> seq = ('a', 'c', 'd', 'e')
-    >> generate_sample(seq, 'samplename')
-
-    >> play('samplename')
-    """
-    ps.make_wav(
-        _seq_to_notes(note_tuple_iterable, dur=dur),
-        fn=os.path.join(ASSET_DIR, f'{label}.wav'),
-        bpm=bpm,
-    )
-
-
 def _seq_is_all_note_tuples(t):
     return ((isinstance(t, tuple) or isinstance(t, list)) and
             all([_is_note_tuple(e) for e in t]))
@@ -244,6 +228,29 @@ def _seq_is_flat(s):
         if isinstance(item, tuple) or isinstance(item, list):
             return False
     return True
+
+
+def mksample(note_tuple_iterable, label, bpm=BPM, dur=4):
+    """
+    Save a sequence of notes as a self-contained sample.
+
+    >> seq = ('a', 'c', 'd', 'e')
+    >> generate_sample(seq, 'samplename')
+
+    >> play('samplename')
+    """
+    if _seq_is_all_note_tuples(note_tuple_iterable):
+        sequence = note_tuple_iterable
+    elif _seq_is_flat(note_tuple_iterable):
+        sequence = _seq_to_notes(note_tuple_iterable)
+    else:
+        raise ValueError(f"I don't know how to make a sample out of: {note_tuple_iterable}!")
+
+    ps.make_wav(
+        sequence,
+        fn=os.path.join(ASSET_DIR, f'{label}.wav'),
+        bpm=bpm,
+    )
 
 
 def chord(notes, dur=4):
