@@ -23,15 +23,18 @@ SUPPRESS_ALSA = True
 # https://stackoverflow.com/questions/7088672/pyaudio-working-but-spits-out-error-messages-each-time
 #
 if SUPPRESS_ALSA:
-    ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
+    try:
+        ERROR_HANDLER_FUNC = CFUNCTYPE(None, c_char_p, c_int, c_char_p, c_int, c_char_p)
 
-    def py_error_handler(filename, line, function, err, fmt):
-        pass
+        def py_error_handler(filename, line, function, err, fmt):
+            pass
 
-    c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
+        c_error_handler = ERROR_HANDLER_FUNC(py_error_handler)
 
-    asound = cdll.LoadLibrary('libasound.so')
-    asound.snd_lib_error_set_handler(c_error_handler)
+        asound = cdll.LoadLibrary('libasound.so')
+        asound.snd_lib_error_set_handler(c_error_handler)
+    except:
+        print('WARNING: ALSA messages could not be suppressed.')
 #####################################################
 
 DURATIONS = list(range(1, 33))
